@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和纸胶带收藏 | Washi Tape Collection</title>
+    <style>
+        :root {
+            --bg-color: #f7f5f2;
+            --text-color: #555555;
+            --accent-color: #bdb8ad;
+            --card-color: #ffffff;
+            --border-color: #e6e3df;
+            --sidebar-width: 220px;
+            --header-height: 100px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        header {
+            text-align: center;
+            padding: 1rem 2rem;
+            background-color: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .language-switcher {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .language-btn {
+            background: none;
+            border: none;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-color);
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+        
+        .language-btn.active {
+            opacity: 1;
+            font-weight: 500;
+            border-bottom: 2px solid var(--accent-color);
+        }
+        
+        h1 {
+            font-weight: 300;
+            color: #333;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: var(--accent-color);
+            font-weight: 300;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+        
+        .main-container {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+        
+        /* 侧边栏样式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: white;
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: calc(100vh - var(--header-height));
+            overflow-y: auto;
+        }
+        
+        .sidebar h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .brand-filter {
+            margin-bottom: 2rem;
+        }
+        
+        .brand-list {
+            list-style: none;
+        }
+        
+        .brand-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .brand-checkbox {
+            margin-right: 0.5rem;
+        }
+        
+        .brand-label {
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .brand-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            background-color: var(--bg-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+        }
+        
+        /* 主内容区域样式 */
+        .content-area {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+        
+        .collection-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+            width: 100%;
+        }
+        
+        .tape-card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .tape-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.07);
+        }
+        
+        .tape-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tape-info {
+            padding: 1.5rem;
+        }
+        
+        .tape-name {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .tape-price {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+        
+        .tape-details {
+            font-size: 0.85rem;
+            color: #777;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--accent-color);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* 过滤和搜索功能 */
+        .filter-section {
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        input, select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: white;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        
+        .search-box {
+            flex-grow: 1;
+            max-width: 400px;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 2rem;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem;
+            }
+            
+            .content-area {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            
+            .collection-container {
+                grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+        
+        /* 移动端菜单触发按钮 */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: white;
+            font-size: 1.5rem;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 900px) {
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .sidebar {
+                display: none;
+                position: fixed;
+                z-index: 999;
+            }
+            
+            .sidebar.active {
+                display: block;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1 id="title">和纸胶带收藏</h1>
+        <p class="subtitle" id="subtitle">我的和纸胶带收藏</p>
+        <div class="language-switcher">
+            <button class="language-btn active" data-lang="zh">中文</button>
+            <button class="language-btn" data-lang="en">English</button>
+            <button class="language-btn" data-lang="ja">日本語</button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar" id="sidebar">
+            <div class="brand-filter">
+                <h2 id="brand-filter-title">品牌筛选</h2>
+                <ul class="brand-list" id="brand-list">
+                    <!-- 品牌列表将通过JavaScript动态生成 -->
+                </ul>
+            </div>
+            
+            <div class="price-filter">
+                <h2 id="price-filter-title">价格区间</h2>
+                <div style="padding: 0 10px;">
+                    <input type="range" id="price-range" min="0" max="100" value="100" class="slider" style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                        <span>¥0</span>
+                        <span id="price-value">¥100</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="width-filter">
+                <h2 id="width-filter-title">胶带宽度</h2>
+                <ul class="width-list" id="width-list">
+                    <!-- 宽度选项将通过JavaScript动态生成 -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="content-area">
+            <div class="filter-section">
+                <input type="text" id="search" placeholder="搜索胶带名称..." class="search-box" />
+                <select id="sort-by">
+                    <option value="default" id="sort-default">默认排序</option>
+                    <option value="price-low" id="sort-price-low">价格从低到高</option>
+                    <option value="price-high" id="sort-price-high">价格从高到低</option>
+                    <option value="name" id="sort-name">按名称排序</option>
+                </select>
+            </div>
+            
+            <div class="collection-container" id="tape-collection">
+                <!-- 胶带卡片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- 移动端菜单按钮 -->
+    <button class="sidebar-toggle" id="sidebar-toggle">≡</button>
+    
+    <footer>
+        <p>&copy; 2025 <span id="footer-title">和纸胶带收藏</span> | <span id="footer-designed">用❤️设计</span></p>
+    </footer>
+    
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 语言设置
+    var currentLang = 'zh'; // 默认中文
+    
+    // DOM元素
+    var searchInput = document.getElementById('search');
+    var sortSelect = document.getElementById('sort-by');
+    var collection = document.getElementById('tape-collection');
+    var brandList = document.getElementById('brand-list');
+    var widthList = document.getElementById('width-list');
+    var priceRange = document.getElementById('price-range');
+    var priceValue = document.getElementById('price-value');
+    var sidebarToggle = document.getElementById('sidebar-toggle');
+    var sidebar = document.getElementById('sidebar');
+    
+    // 语言翻译
+    var translations = {
+        'title': {
+            'zh': '和纸胶带收藏',
+            'en': 'Washi Tape Collection',
+            'ja': '和紙テープコレクション'
+        },
+        'subtitle': {
+            'zh': '我的和纸胶带收藏',
+            'en': 'My Washi Tape Collection',
+            'ja': '私の和紙テープコレクション'
+        },
+        'brandFilterTitle': {
+            'zh': '品牌筛选',
+            'en': 'Filter by Brand',
+            'ja': 'ブランドでフィルター'
+        },
+        'priceFilterTitle': {
+            'zh': '价格区间',
+            'en': 'Price Range',
+            'ja': '価格範囲'
+        },
+        'widthFilterTitle': {
+            'zh': '胶带宽度',
+            'en': 'Tape Width',
+            'ja': 'テープ幅'
+        },
+        'allBrands': {
+            'zh': '全部品牌',
+            'en': 'All Brands',
+            'ja': 'すべてのブランド'
+        },
+        'sortDefault': {
+            'zh': '默认排序',
+            'en': 'Default Sort',
+            'ja': 'デフォルト並べ替え'
+        },
+        'sortPriceLow': {
+            'zh': '价格从低到高',
+            'en': 'Price: Low to High',
+            'ja': '価格：安い順'
+        },
+        'sortPriceHigh': {
+            'zh': '价格从高到低',
+            'en': 'Price: High to Low',
+            'ja': '価格：高い順'
+        },
+        'sortName': {
+            'zh': '按名称排序',
+            'en': 'Sort by Name',
+            'ja': '名前で並べ替え'
+        },
+        'searchPlaceholder': {
+            'zh': '搜索胶带名称...',
+            'en': 'Search tape name...',
+            'ja': 'テープ名を検索...'
+        },
+        'noResults': {
+            'zh': '没有找到符合条件的和纸胶带',
+            'en': 'No matching washi tapes found',
+            'ja': '条件に一致する和紙テープが見つかりません'
+        },
+        'width': {
+            'zh': '宽度',
+            'en': 'Width',
+            'ja': '幅'
+        },
+        'length': {
+            'zh': '长度',
+            'en': 'Length',
+            'ja': '長さ'
+        },
+        'brand': {
+            'zh': '品牌',
+            'en': 'Brand',
+            'ja': 'ブランド'
+        },
+        'description': {
+            'zh': '描述',
+            'en': 'Description',
+            'ja': '説明'
+        },
+        'footerTitle': {
+            'zh': '和纸胶带收藏',
+            'en': 'Washi Tape Collection',
+            'ja': '和紙テープコレクション'
+        },
+        'footerDesigned': {
+            'zh': '用❤️设计',
+            'en': 'Designed with ❤️',
+            'ja': '❤️で設計'
+        }
+    };
+    
+    // 过滤器状态
+    var activeFilters = {
+        brands: new Set(['all']),
+        maxPrice: 100,
+        widths: new Set()
+    };
+    
+    // 模拟数据 - 实际项目中，应从tapes-data.json加载
+    var tapesData = [
+        {
+            id: 1,
+            name: {
+                zh: "樱花图案和纸胶带",
+                en: "Sakura Pattern Washi Tape",
+                ja: "桜柄和紙テープ"
+            },
+            price: 15.00,
+            currency: "¥",
+            width: "15mm",
+            length: "7m",
+            brand: "MT",
+            description: {
+                zh: "粉色底色上点缀精致樱花图案，适合春季手帐装饰",
+                en: "Pink background with delicate cherry blossom pattern, perfect for spring journaling",
+                ja: "ピンクの背景に繊細な桜模様、春のジャーナリングに最適"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 2,
+            name: {
+                zh: "蓝色波浪纹和纸胶带",
+                en: "Blue Wave Pattern Washi Tape",
+                ja: "青い波模様和紙テープ"
+            },
+            price: 18.50,
+            currency: "¥",
+            width: "20mm",
+            length: "5m",
+            brand: "Kamoi",
+            description: {
+                zh: "深浅蓝色交替的波浪纹理，有着浓厚的日式夏季风情",
+                en: "Alternating light and dark blue wave patterns with a strong Japanese summer feel",
+                ja: "濃淡の青色が交互に波模様になっており、日本の夏らしさが感じられます"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 3,
+            name: {
+                zh: "金箔点缀几何纹和纸胶带",
+                en: "Gold Foil Geometric Washi Tape",
+                ja: "金箔幾何学模様和紙テープ"
+            },
+            price: 25.00,
+            currency: "¥",
+            width: "10mm",
+            length: "10m",
+            brand: "Papier Platz",
+            description: {
+                zh: "白色底色上点缀金色几何图案，典雅精致",
+                en: "White background with gold geometric patterns, elegant and exquisite",
+                ja: "白地に金の幾何学模様が散りばめられた、エレガントで精巧なデザイン"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 4,
+            name: {
+                zh: "复古邮戳和纸胶带",
+                en: "Vintage Postmark Washi Tape",
+                ja: "ヴィンテージ郵便スタンプ和紙テープ"
+            },
+            price: 12.80,
+            currency: "¥",
+            width: "15mm",
+            length: "8m",
+            brand: "Classiky",
+            description: {
+                zh: "米黄色底纹配上复古邮戳图案，适合做复古风格拼贴",
+                en: "Beige background with vintage postmark patterns, suitable for retro style collages",
+                ja: "ベージュ地にヴィンテージ郵便スタンプ模様、レトロなコラージュに最適"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 5,
+            name: {
+                zh: "森林动物系列和纸胶带",
+                en: "Forest Animals Washi Tape",
+                ja: "森の動物シリーズ和紙テープ"
+            },
+            price: 22.00,
+            currency: "¥",
+            width: "30mm",
+            length: "5m",
+            brand: "MT",
+            description: {
+                zh: "绿色底色搭配可爱森林动物插画，适合儿童手工",
+                en: "Green background with cute forest animal illustrations, ideal for children's crafts",
+                ja: "緑の背景にかわいい森の動物のイラスト、子供の工作に最適"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 6,
+            name: {
+                zh: "水彩花卉和纸胶带",
+                en: "Watercolor Floral Washi Tape",
+                ja: "水彩花柄和紙テープ"
+            },
+            price: 19.90,
+            currency: "¥",
+            width: "15mm",
+            length: "7m",
+            brand: "Papier Platz",
+            description: {
+                zh: "精美水彩画风格的花卉图案，色彩柔美",
+                en: "Exquisite watercolor style floral patterns with soft beautiful colors",
+                ja: "繊細な水彩画風の花柄、優しい色合い"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        },
+        {
+            id: 7,
+            name: {
+                zh: "黑白格纹和纸胶带",
+                en: "Black and White Grid Washi Tape",
+                ja: "白黒チェック和紙テープ"
+            },
+            price: 14.50,
+            currency: "¥",
+            width: "20mm",
+            length: "10m",
+            brand: "Classiky",
+            description: {
+                zh: "简约黑白格纹设计，百搭款式",
+                en: "Minimalist black and white grid design, versatile style",
+                ja: "シンプルな白黒チェックデザイン、多用途なスタイル"
+            },
+            imageUrl: "/api/placeholder/400/320"
+        }
+    ];
+    
+    // 初始化
+    initializeLanguage();
+    setupFilters();
+    setupEventListeners();
+    renderTapeCollection(tapesData);
+    
+    // 更新语言
+    function updateLanguage() {
+        // 更新页面标题和副标题
+        document.getElementById('title').textContent = translations.title[currentLang];
+        document.getElementById('subtitle').textContent = translations.subtitle[currentLang];
+        
+        // 更新筛选器标题
+        document.getElementById('brand-filter-title').textContent = translations.brandFilterTitle[currentLang];
+        document.getElementById('price-filter-title').textContent = translations.priceFilterTitle[currentLang];
+        document.getElementById('width-filter-title').textContent = translations.widthFilterTitle[currentLang];
+        
+        // 更新排序选项
+        document.getElementById('sort-default').textContent = translations.sortDefault[currentLang];
+        document.getElementById('sort-price-low').textContent = translations.sortPriceLow[currentLang];
+        document.getElementById('sort-price-high').textContent = translations.sortPriceHigh[currentLang];
+        document.getElementById('sort-name').textContent = translations.sortName[currentLang];
+        
+        // 更新搜索占位符
+        searchInput.placeholder = translations.searchPlaceholder[currentLang];
+        
+        // 更新页脚
+        document.getElementById('footer-title').textContent = translations.footerTitle[currentLang];
+        document.getElementById('footer-designed').textContent = translations.footerDesigned[currentLang];
+    }
+    
+    // 初始化多语言支持
+    function initializeLanguage() {
+        // 设置语言切换按钮事件
+        document.querySelectorAll('.language-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                currentLang = this.getAttribute('data-lang');
+                
+                // 更新按钮状态
+                document.querySelectorAll('.language-btn').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 更新所有文本
+                updateLanguage();
+                
+                // 重新渲染品牌和宽度筛选器
+                setupBrandFilter();
+                setupWidthFilter();
+                
+                // 重新渲染胶带卡片
+                applyFilters();
+            });
+        });
+        
+        // 初始化所有文本
+        updateLanguage();
+    }
+    
+    // 设置过滤器
+    function setupFilters() {
+        setupBrandFilter();
+        setupWidthFilter();
+        
+        // 设置价格范围
+        var maxPrice = Math.max.apply(null, tapesData.map(function(tape) { return tape.price; }));
+        priceRange.max = Math.ceil(maxPrice);
+        priceRange.value = Math.ceil(maxPrice);
+        priceValue.textContent = '¥' + Math.ceil(maxPrice);
+        activeFilters.maxPrice = Math.ceil(maxPrice);
+    }
+    
+    // 设置品牌筛选器
+    function setupBrandFilter() {
+        // 提取所有品牌
+        var brands = [];
+        var brandSet = new Set();
+        
+        tapesData.forEach(function(tape) {
+            if (!brandSet.has(tape.brand)) {
+                brands.push(tape.brand);
+                brandSet.add(tape.brand);
+            }
+        });
+        
+        // 清空品牌列表
+        brandList.innerHTML = '';
+        
+        // 添加"全部品牌"选项
+        var allBrandsLi = document.createElement('li');
+        allBrandsLi.className = 'brand-item';
+        allBrandsLi.innerHTML = 
+            '<label class="brand-label">' +
+            '<input type="checkbox" class="brand-checkbox" data-brand="all" checked>' +
+            translations.allBrands[currentLang] +
+            '</label>';
+        brandList.appendChild(allBrandsLi);
+        
+        // 添加每个品牌的选项
+        brands.forEach(function(brand) {
+            var count = tapesData.filter(function(tape) { return tape.brand === brand; }).length;
+            var li = document.createElement('li');
+            li.className = 'brand-item';
+            li.innerHTML = 
+                '<label class="brand-label">' +
+                '<input type="checkbox" class="brand-checkbox" data-brand="' + brand + '">' +
+                brand +
+                '<span class="brand-count">' + count + '</span>' +
+                '</label>';
+            brandList.appendChild(li);
+        });
+        
+        // 添加品牌筛选器事件
+        document.querySelectorAll('.brand-checkbox[data-brand]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', handleBrandFilterChange);
+        });
+    }
+    
+    // 处理品牌筛选器变化
+    function handleBrandFilterChange() {
+        var brand = this.getAttribute('data-brand');
+        
+        if (brand === 'all') {
+            // 全部品牌选项的处理
+            if (this.checked) {
+                // 如果选中了"全部品牌"，取消选择其他品牌
+                document.querySelectorAll('.brand-checkbox[data-brand]:not([data-brand="all"])').forEach(function(cb) {
+                    cb.checked = false;
+                });
+                activeFilters.brands = new Set(['all']);
+            } else {
+                // 如果取消了"全部品牌"，但没有其他品牌被选中，重新选中它
+                if (activeFilters.brands.size === 1 && activeFilters.brands.has('all')) {
+                    this.checked = true;
+                    return;
+                }
+            }
+        } else {
+            // 其他品牌选项的处理
+            if (this.checked) {
+                // 如果选中了特定品牌，取消选择"全部品牌"
+                var allBrandCheckbox = document.querySelector('.brand-checkbox[data-brand="all"]');
+                if (allBrandCheckbox.checked) {
+                    allBrandCheckbox.checked = false;
+                    activeFilters.brands.delete('all');
+                }
+                activeFilters.brands.add(brand);
+            } else {
+                activeFilters.brands.delete(brand);
+                
+                // 如果没有品牌被选中，选择"全部品牌"
+                if (activeFilters.brands.size === 0) {
+                    var allBrandCheckbox = document.querySelector('.brand-checkbox[data-brand="all"]');
+                    allBrandCheckbox.checked = true;
+                    activeFilters.brands.add('all');
+                }
+            }
+        }
+        
+        applyFilters();
+    }
+    
+    // 设置宽度筛选器
+    function setupWidthFilter() {
+        // 获取所有不同的宽度值
+        var widthValues = [];
+        var widthSet = new Set();
+        
+        // 遍历所有胶带数据，收集不同的宽度值
+        for (var i = 0; i < tapesData.length; i++) {
+            var tapeWidth = tapesData[i].width;
+            if (!widthSet.has(tapeWidth)) {
+                widthValues.push(tapeWidth);
+                widthSet.add(tapeWidth);
+            }
+        }
+        
+        // 清空宽度列表
+        widthList.innerHTML = '';
+        
+        // 为每个宽度创建复选框选项
+        for (var j = 0; j < widthValues.length; j++) {
+            var currentWidth = widthValues[j];
+            var count = 0;
+            
+            // 计算每个宽度的胶带数量
+            for (var k = 0; k < tapesData.length; k++) {
+                if (tapesData[k].width === currentWidth) {
+                    count++;
+                }
+            }
+            
+            // 创建列表项
+            var li = document.createElement('li');
+            li.className = 'brand-item'; // 复用样式
+            li.innerHTML = 
+                '<label class="brand-label">' +
+                '<input type="checkbox" class="brand-checkbox" data-width="' + currentWidth + '">' +
+                currentWidth +
+                '<span class="brand-count">' + count + '</span>' +
+                '</label>';
+            widthList.appendChild(li);
+        }
+        
+        // 添加宽度筛选器事件
+        document.querySelectorAll('.brand-checkbox[data-width]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', handleWidthFilterChange);
+        });
+    }
+    
+    // 处理宽度筛选器变化
+    function handleWidthFilterChange() {
+        var widthValue = this.getAttribute('data-width');
+        
+        if (this.checked) {
+            activeFilters.widths.add(widthValue);
+        } else {
+            activeFilters.widths.delete(widthValue);
+        }
+        
+        applyFilters();
+    }
+    
+    // 设置事件监听器
+    function setupEventListeners() {
+        // 侧边栏切换（移动端）
+        sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+        });
+        
+        // 价格筛选器监听
+        priceRange.addEventListener('input', function() {
+            priceValue.textContent = '¥' + this.value;
+            activeFilters.maxPrice = Number(this.value);
+            applyFilters();
+        });
+        
+        // 搜索功能
+        searchInput.addEventListener('input', function() {
+            applyFilters();
+        });
+        
+        // 排序功能
+        sortSelect.addEventListener('change', function() {
+            applyFilters();
+        });
+    }
+    
+    // 渲染胶带集合
+    function renderTapeCollection(tapes) {
+        collection.innerHTML = '';
+        
+        if (tapes.length === 0) {
+            collection.innerHTML = '<div class="no-results">' + translations.noResults[currentLang] + '</div>';
+            return;
+        }
+        
+        tapes.forEach(function(tape) {
+            var tapeCard = document.createElement('div');
+            tapeCard.className = 'tape-card';
+            
+            // 获取当前语言的名称和描述
+            var tapeName = tape.name[currentLang] || tape.name.en || Object.values(tape.name)[0];
+            var tapeDescription = tape.description[currentLang] || tape.description.en || Object.values(tape.description)[0];
+            
+            tapeCard.innerHTML = 
+                '<img src="' + tape.imageUrl + '" alt="' + tapeName + '" class="tape-image">' +
+                '<div class="tape-info">' +
+                    '<h3 class="tape-name">' + tapeName + '</h3>' +
+                    '<p class="tape-price">' + tape.currency + tape.price.toFixed(2) + '</p>' +
+                    '<div class="tape-details">' +
+                        '<p>' + translations.width[currentLang] + ': ' + tape.width + '</p>' +
+                        '<p>' + translations.length[currentLang] + ': ' + tape.length + '</p>' +
+                        '<p>' + translations.brand[currentLang] + ': ' + tape.brand + '</p>' +
+                        (tapeDescription ? '<p>' + translations.description[currentLang] + ': ' + tapeDescription + '</p>' : '') +
+                    '</div>' +
+                '</div>';
+            
+            collection.appendChild(tapeCard);
+        });
+    }
+    
+    // 应用筛选和排序
+    function applyFilters() {
+        var searchTerm = searchInput.value.toLowerCase();
+        var sortValue = sortSelect.value;
+        
+        // 应用筛选
+        var filteredTapes = tapesData.filter(function(tape) {
+            // 搜索筛选 - 在所有语言版本中搜索
+            var matchesSearch = false;
+            for (var lang in tape.name) {
+                if (tape.name[lang].toLowerCase().includes(searchTerm)) {
+                    matchesSearch = true;
+                    break;
+                }
+            }
+            
+            if (!matchesSearch && tape.brand.toLowerCase().includes(searchTerm)) {
+                matchesSearch = true;
+            }
+            
+            if (!matchesSearch) {
+                for (var lang in tape.description) {
+                    if (tape.description[lang] && tape.description[lang].toLowerCase().includes(searchTerm)) {
+                        matchesSearch = true;
+                        break;
+                    }
+                }
+            }
+            
+            // 品牌筛选
+            var matchesBrand = activeFilters.brands.has('all') || activeFilters.brands.has(tape.brand);
+            
+            // 价格筛选
+            var matchesPrice = tape.price <= activeFilters.maxPrice;
+            
+            // 宽度筛选
+            var matchesWidth = activeFilters.widths.size === 0 || activeFilters.widths.has(tape.width);
+            
+            return matchesSearch && matchesBrand && matchesPrice && matchesWidth;
+        });
+        
+        // 应用排序
+        switch(sortValue) {
+            case 'price-low':
+                filteredTapes.sort(function(a, b) { return a.price - b.price; });
+                break;
+            case 'price-high':
+                filteredTapes.sort(function(a, b) { return b.price - a.price; });
+                break;
+            case 'name':
+                // 按当前语言排序名称
+                filteredTapes.sort(function(a, b) {
+                    var nameA = a.name[currentLang] || a.name.en || Object.values(a.name)[0];
+                    var nameB = b.name[currentLang] || b.name.en || Object.values(b.name)[0];
+                    return nameA.localeCompare(nameB, currentLang);
+                });
+                break;
+            default:
+                // 默认排序，按ID排序
+                filteredTapes.sort(function(a, b) { return a.id - b.id; });
+                break;
+        }
+        
+        renderTapeCollection(filteredTapes);
+    }
+});
+    </script>
