@@ -1,0 +1,40 @@
+[
+  {
+    "id": 1,
+    "name": {
+      "zh": "樱花图案和纸胶带",
+      "en": "Sakura Pattern Washi Tape",
+      "ja": "桜柄和紙テープ"
+    },
+    "price": 15.00,
+    "currency": "¥",
+    "width": "15mm",
+    "length": "7m",
+    "brand": "MT",
+    "description": {
+      "zh": "粉色底色上点缀精致樱花图案，适合春季手帐装饰",
+      "en": "Pink background with delicate cherry blossom pattern, perfect for spring journaling",
+      "ja": "ピンクの背景に繊細な桜模様、春のジャーナリングに最適"
+    },
+    "imageUrl": "images/sakura-tape.jpg"
+  },
+  {
+    "id": 2,
+    "name": {
+      "zh": "蓝色波浪纹和纸胶带",
+      "en": "Blue Wave Pattern Washi Tape",
+      "ja": "青い波模様和紙テープ"
+    },
+    "price": 18.50,
+    "currency": "¥",
+    "width": "20mm",
+    "length": "5m",
+    "brand": "Kamoi",
+    "description": {
+      "zh": "深浅蓝色交替的波浪纹理，有着浓厚的日式夏季风情",
+      "en": "Alternating light and dark blue wave patterns with a strong Japanese summer feel",
+      "ja": "濃淡の青色が交互に波模様になっており、日本の夏らしさが感じられます"
+    },
+    "imageUrl": "images/blue-wave-tape.jpg"
+  }
+]
